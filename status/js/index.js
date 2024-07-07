@@ -1,12 +1,5 @@
-// const socket = new WebSocket("ws://119.45.12.243/ws")
-const socket = new WebSocket("ws://localhost:8081/")
+const socket = new WebSocket("ws://119.45.12.243/ws/status")
 socket.addEventListener("open", (event) => { socket.send("status") })
-
-// socket.addEventListener("open", (event) => {
-//     setInterval(() => {
-//         socket.send("status")
-//     }, 1000)
-// })
 
 socket.onmessage = function (event) {
     if (document.readyState == "complete") {
