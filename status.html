@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>服务器状态</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+</head>
+
+<body>
+    <h1>服务器状态：<p id="status" style="color: red;">null</p>
+    </h1>
+    <br>
+    <div id="statusPanel" style="visibility: hidden;">
+        <h1>本次启动日期：<p id="startDate">null</p></h1>
+        <h1>本次运行时间：<p id="upTime">0</p></h1>
+        <h3>在线玩家列表：<p id="playerList">null</p></h3>
+    </div>
+    <script lang="javascript">
+	const socket = new WebSocket("ws://119.45.12.243/ws/status")
+	socket.addEventListener("open", (event) => { socket.send("status") })
+
+	socket.onmessage = function (event) {
+    	if (document.readyState == "complete") {
+            const data = JSON.parse(event.data)
+            if (!data.status) {
+            	document.getElementById("statusPanel").style.visibility = "hidden"
+            	document.getElementById("status").innerHTML = "已停止"
+            	document.getElementById("status").style.color = "red"
+       	    } else {
+            	document.getElementById("statusPanel").style.visibility = "visible"
+            	document.getElementById("status").innerHTML = "正在运行"
+            	document.getElementById("status").style.color = "green"
+            	document.getElementById("upTime").innerHTML = data.upTime
+            	var players = ""
+            	data.playerList.forEach(playerName => {
+                    players += "<p>" + playerName + "</p>"
+           	});
+            	document.getElementById("playerList").innerHTML = players
+            	var date = new Date(data.startTime)
+            	document.getElementById("startDate").innerHTML = date.toLocaleDateString() + " " + date.toLocaleTimeString().substring(0, 8)
+        	}
+            }
+        }
+    </script>
+</body>
+
+</html>
